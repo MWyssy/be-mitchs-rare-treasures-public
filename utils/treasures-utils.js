@@ -2,6 +2,8 @@ const format = require("pg-format");
 const db = require("../db/index.js");
 
 exports.prepareTreasureData = (arr, shopData) => {
+  if (!arr || !shopData) return [];
+
   const copyArr = [...arr];
   return copyArr.map((treasure) => {
     const copyTreasure = { ...treasure };
@@ -14,6 +16,8 @@ exports.prepareTreasureData = (arr, shopData) => {
 };
 
 exports.formatTreasureData = (treasureData) => {
+  if (!treasureData) return [];
+
   return treasureData.map((treasure) => {
     return [
       treasure.treasure_name,
@@ -26,6 +30,7 @@ exports.formatTreasureData = (treasureData) => {
 };
 
 exports.insertTreasures = (formattedTreasureData) => {
+  if (!formattedTreasureData) return "";
   const treasureInsertStr = format(
     `INSERT INTO treasures
             (treasure_name, colour, age, cost_at_auction, shop_id)

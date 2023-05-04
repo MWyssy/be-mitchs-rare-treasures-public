@@ -1,9 +1,11 @@
-const { formatShopData, insertShops } = require("../utils/shops-utils.js");
 const {
+  formatShopData,
+  insertShops,
   formatTreasureData,
   prepareTreasureData,
   insertTreasures,
-} = require("../utils/treasures-utils.js");
+} = require("../utils/index.js");
+
 const db = require("./index.js");
 
 const seed = ({ shopData, treasureData }) => {

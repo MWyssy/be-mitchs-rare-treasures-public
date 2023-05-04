@@ -1,6 +1,8 @@
 const format = require("pg-format");
 
 exports.formatShopData = (arr) => {
+  if (!arr) return [];
+
   const copyArr = [...arr];
   return copyArr.map((shop) => {
     const copyShop = { ...shop };
@@ -9,6 +11,7 @@ exports.formatShopData = (arr) => {
 };
 
 exports.insertShops = (formattedArr) => {
+  if (!formattedArr) return "";
   const shopsInsertStr = format(
     `INSERT INTO shops
         (shop_name, owner, slogan)
