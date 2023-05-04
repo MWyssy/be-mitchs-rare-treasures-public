@@ -26,6 +26,8 @@
     "supertest": "^6.1.3"
   },
   "jest": {
-    "setupFilesAfterEnv": ["jest-sorted"]
+    "setupFilesAfterEnv": [
+      "jest-sorted"
+    ]
   }
 }

@@ -1,6 +1,6 @@
-const data = require('./data/dev-data');
-const seed = require('./seed');
+const data = require("./data/dev-data");
+const seed = require("./seed");
 
-const db = require('./');
+const db = require("./index.js");
 
 seed(data).then(() => db.end());
