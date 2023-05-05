@@ -1,4 +1,6 @@
 const db = require("../db/index");
+const { formatTreasureData, insertTreasures } = require("../utils");
+
 
 exports.selectTreasures = (
   sort,
@@ -87,4 +89,62 @@ function filter(query1, query2) {
     result.queryValues.push(query2[query2Key]);
   }
   return result;
+}
+
+
+exports.addTreasure = (treasure) => {
+  const formattedTreasuresArr = formatTreasureData(treasure)
+  const insertTreasureString = insertTreasures(formattedTreasuresArr)
+  return db.query(insertTreasureString).then((result) => {
+    return result.rows;
+  })
+  .catch((err) => {
+    if (err.code === "22P02") {
+      return Promise.reject({ status: 400, msg: "Incorrect data format - incorrect value type" })
+    }
+
+    if (err.code === "23502") {
+
+    return Promise.reject({ status: 400, msg: "Incorrect data format - incorrect or incomplete keys" })
+    }
+
+  })
+}
+
+exports.updatePrice = (newPrice, treasure_id) => {
+  const queryString = `
+  UPDATE treasures
+  SET cost_at_auction = $1
+  WHERE treasure_id = $2
+  RETURNING *;`
+  return db.query(queryString, [newPrice, treasure_id])
+  .then((result) => {
+    if (result.rows.length === 0) {
+
+      return Promise.reject({status: 404, msg: "ID not found"})
+    }
+    return result.rows;
+  })
+  .catch((err) => {
+  
+ 
+    if (err.code === "22P02") {
+      return Promise.reject({ status: 400, msg: "Incorrect ID format - must be a number" })
+    }
+    return Promise.reject(err)
+
+
+  })
+  
+}
+
+exports.removeTreasure = (treasure_id) => {
+  const queryString = `
+  DELETE FROM treasures
+  WHERE treasure_id = $1
+  RETURNING *;`
+
+  return db.query(queryString, [treasure_id]).then((result) => {
+    return result.rows
+  })
 }
