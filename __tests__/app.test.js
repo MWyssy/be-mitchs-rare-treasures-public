@@ -62,16 +62,51 @@ describe("GET /api/treasures", () => {
         expect(body.error).toBe("Invalid order query");
       });
   });
-  test("Accepts a filter query and respons with filtered treasures", () => {
+  test("Accepts a filter query and responds with filtered treasures", () => {
     return request(app)
       .get("/api/treasures?colour=gold")
       .expect(200)
       .then(({ body }) => {
-        console.log(body);
+        expect(body.treasures.length).toBe(2);
         body.treasures.forEach((treasure) => {
-          console.log(treasure);
           expect(treasure.colour).toBe("gold");
         });
+      });
+  });
+  test("Accepts a second filter query and responds with filtered treasures", () => {
+    return request(app)
+      .get("/api/treasures?colour=gold&shop_name=shop-f")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.treasures.length).toBe(1);
+        body.treasures.forEach((treasure) => {
+          expect(treasure.colour).toBe("gold");
+          expect(treasure.shop_name).toBe("shop-f");
+        });
+      });
+  });
+  test("Will return a 400 error if more than two filter queries are used", () => {
+    return request(app)
+      .get("/api/treasures?colour=gold&shop_name=shop-f&age=13")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.error).toBe("Invalid filter query - too many queries!");
+      });
+  });
+  test("Will return a 400 error if an invalid query is used", () => {
+    return request(app)
+      .get("/api/treasures?nonsense=morenonsense&something=somethingelse")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.error).toBe("Invalid filter query used");
+      });
+  });
+  test("Will return a 400 error if an invalid query value is used", () => {
+    return request(app)
+      .get("/api/treasures?colour=;DROP TABLE treasures")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.error).toBe("Invalid filter query value used");
       });
   });
 });

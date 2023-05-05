@@ -11,8 +11,26 @@ exports.getTreasures = (req, res, next) => {
     colour,
     age,
     cost_at_auction,
-    shop_id,
+    shop_name,
   } = req.query;
+
+  const possibleQueries = [
+    "sort_by",
+    "order",
+    "treasure_name",
+    "colour",
+    "age",
+    "cost_at_auction",
+    "shop_name",
+  ];
+
+  const queryKeys = Object.keys(req.query);
+
+  for (let i = 0; i < queryKeys.length; i++) {
+    if (!possibleQueries.includes(queryKeys[i])) {
+      return next({ status: 400, msg: "Invalid filter query used" });
+    }
+  }
 
   selectTreasures(
     sort_by,
@@ -21,7 +39,7 @@ exports.getTreasures = (req, res, next) => {
     colour,
     age,
     cost_at_auction,
-    shop_id
+    shop_name
   )
     .then((result) => {
       res.status(200).send({ treasures: result });
